@@ -18,7 +18,7 @@ echo '<h2>绑定多个百度ID</h2><p style="color:#757575;font-size:12px">当�
 	<tbody id="x_m_ids"></tbody>
 </table>
 <p>
-	<a class="btn" href="javascript:;" id="x_m_add_id">添加id</a>
+	<a class="btn" href="javascript:;" id="x_m_add_id">添加账户</a> <a class="btn" href="javascript:;" onclick="window.location.href = 'plugins/x_multi/ajax.php?v=add_id_m'">手动获取</a>
 </p>
 <br>
 <p>多ID签到记录:</p>
