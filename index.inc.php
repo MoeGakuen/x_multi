@@ -1,9 +1,8 @@
 <?php
-if (! defined ( 'IN_KKFRAME' ))
-	exit ( 'Access Denied!' );
-$version = getSetting ( 'x_multi', true );
-$version1 = substr ( $version, 0, 5 );
-$version2 = substr ( $version, 6, 10 );
+if (!defined('IN_KKFRAME')) exit('Access Denied!');
+$version = getSetting ('x_multi',true);
+$version1 = substr ($version, 0, 5);
+$version2 = substr ($version, 6, 10);
 echo '<h2>绑定多个百度ID</h2><p style="color:#757575;font-size:12px">当前插件版本：' . $version1 . ' | 更新日期：' . $version2 . ' | Designed By <a href="http://xxsky.me" target="_blank">@星弦雪</a> | Optimized by <a href="http://gakuen.me" target="_blank">@学园</a></p>';
 ?>
 <br>

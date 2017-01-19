@@ -16,7 +16,7 @@ class plugin_x_multi {
 	}
 	public static function on_install() {
 		DB::query ( "CREATE TABLE IF NOT EXISTS x_multi(xmid int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,xuid int(10) unsigned NOT NULL,uid int(10) unsigned NOT NULL,name varchar(32) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8" );
-		saveSetting ( 'x_multi', '0.2.0-2016-01-19' );
+		saveSetting ( 'x_multi', '0.2.1-2016-01-19' );
 		showmessage ( "安装成功！" );
 	}
 	public static function on_uninstall() {
