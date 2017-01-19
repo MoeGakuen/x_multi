@@ -69,7 +69,7 @@ switch ($_GET['v']) {
         break;
     case 'load_xm_ids':
         $query = DB::query ( "SELECT * FROM `x_multi` WHERE `uid` = '{$uid}'" );
-        while ( $result = DB::fetch ( $query ) ) {
+        while ($result = DB::fetch($query)) {
             $data['xmids'][] = $result;
         }
         $data ['count'] = count ( $data ['xmids'] );
@@ -90,6 +90,10 @@ switch ($_GET['v']) {
             $data ['url'] = cloud::get_api_path() . "login.php?sid=" . cloud::id() . "&parm={$parm_string}&callback=plugins%2fx_multi%2fajax.php%3fv%3dcallback";
         }
         break;
+    case 'add_id_m':
+        header("Location: " . cloud::get_api_path() . "manual_bind.php?sid=" . cloud::id() . "&formhash={$formhash}&callback=plugins%2fx_multi%2fajax.php%3fv%3dcallback"); 
+        die;
+        break;
     case 'callback':
         $_cookie = !empty($_POST['cookie']) ? $_POST['cookie'] : (!empty($_GET['cookie']) ? $_GET['cookie'] : '');
         if(!$_cookie) throw new Exception('空响应');
@@ -101,12 +105,6 @@ switch ($_GET['v']) {
         }
         if(empty($cookie)) showmessage('非法调用！', stristr($siteurl,'plugins',true) . '#baidu_bind', 1);
         if (!verify_cookie($cookie)) showmessage('无法登陆百度贴吧，请尝试重新绑定',stristr($siteurl,'plugins',true) . '#x_multi-index',5);
-        $newuser = DB::fetch_first("select * from `member` where `uid`='{$uid}'");
-        $xuid = DB::insert('member', array(
-            'username' => $newuser['username'],
-            'password' => $newuser['password'],
-            'email' => $newuser['email']
-        ));
 
         function textMiddle($text, $left, $right) {
             $loc1 = stripos($text, $left);
@@ -124,7 +122,19 @@ switch ($_GET['v']) {
         $res = curl_exec($ch);
         curl_close($ch);
         $bname = textMiddle($res,'class="user-name">','</div>');
+        if (empty($bname)) showmessage('获取百度昵称失败，请重试',stristr($siteurl,'plugins',true) . '#x_multi-index',5);
 
+        $countx = DB::result_first("select count(*) from `x_multi` where `name` = {$bname}");
+        if($countx > 0){
+            showmessage('该ID已被绑定！',stristr($siteurl,'plugins',true) . '#x_multi-index',5);
+        }
+
+        $newuser = DB::fetch_first("select * from `member` where `uid`='{$uid}'");
+        $xuid = DB::insert('member', array(
+            'username' => $newuser['username'],
+            'password' => $newuser['password'],
+            'email' => $newuser['email']
+        ));
         DB::insert('x_multi', array(
             'xuid' => $xuid,
             'uid' => $uid,
