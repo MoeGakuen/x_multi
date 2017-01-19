@@ -13,12 +13,12 @@ switch ($_GET['v']) {
         break;
     case 'load_xm_logs':
         $date = date('Ymd');
-        $countx = DB::result_first("select count(*) from x_multi where uid={$uid}");
-        if(!empty($countx)){
+        $countx = DB::result_first("select count(*) from `x_multi` where `uid` = {$uid}");
+        if($countx <= 0){
             $data ['msgx'] = 1;
             break;
         }
-        $query = DB::query("select * from x_multi where uid={$uid}");
+        $query = DB::query("select * from `x_multi` where `uid` = {$uid}");
         $xuids = "";
         while($result = DB::fetch($query)){
             $xuid = $result['xuid'];
@@ -31,27 +31,27 @@ switch ($_GET['v']) {
             $data['log'][$xuid]['unsupport'] = 0;
         }
         $xuids = substr($xuids, 0,-1);
-        $query = DB::query("SELECT uid, COUNT(*) FROM `sign_log` WHERE date='{$date}' AND status='2' and uid in ({$xuids}) GROUP BY uid");
+        $query = DB::query("SELECT `uid`, COUNT(*) FROM `sign_log` WHERE `date`='{$date}' AND `status`='2' and `uid` in ({$xuids}) GROUP BY `uid`");
         while($result = DB::fetch($query)){
             $_uid = $result['uid'];
             $data['log'][$_uid]['succeed'] = $result['COUNT(*)'];
         }
-        $query = DB::query("SELECT uid, COUNT(*) FROM `sign_log` WHERE date='{$date}' AND status='0' and uid in ({$xuids}) GROUP BY uid");
+        $query = DB::query("SELECT `uid`, COUNT(*) FROM `sign_log` WHERE `date`='{$date}' AND `status`='0' and `uid` in ({$xuids}) GROUP BY `uid`");
         while($result = DB::fetch($query)){
             $_uid = $result['uid'];
             $data['log'][$_uid]['waiting'] = $result['COUNT(*)'];
         }
-        $query = DB::query("SELECT uid, COUNT(*) FROM `sign_log` WHERE date='{$date}' AND status='1' and uid in ({$xuids}) GROUP BY uid");
+        $query = DB::query("SELECT `uid`, COUNT(*) FROM `sign_log` WHERE `date`='{$date}' AND `status`='1' and `uid` in ({$xuids}) GROUP BY `uid`");
         while($result = DB::fetch($query)){
             $_uid = $result['uid'];
             $data['log'][$_uid]['retry'] = $result['COUNT(*)'];
         }
-        $query = DB::query("SELECT uid, COUNT(*) FROM `sign_log` WHERE date='{$date}' AND status='-1' and uid in ({$xuids}) GROUP BY uid");
+        $query = DB::query("SELECT `uid`, COUNT(*) FROM `sign_log` WHERE `date`='{$date}' AND `status`='-1' and `uid` in ({$xuids}) GROUP BY `uid`");
         while($result = DB::fetch($query)){
             $_uid = $result['uid'];
             $data['log'][$_uid]['unsupport'] = $result['COUNT(*)'];
         }
-        $query = DB::query("SELECT uid, COUNT(*) FROM `sign_log` WHERE date='{$date}' AND status='-2' and uid in ({$xuids}) GROUP BY uid");
+        $query = DB::query("SELECT `uid`, COUNT(*) FROM `sign_log` WHERE `date`='{$date}' AND `status`='-2' and `uid` in ({$xuids}) GROUP BY `uid`");
         while($result = DB::fetch($query)){
             $_uid = $result['uid'];
             $data['log'][$_uid]['skiped'] = $result['COUNT(*)'];
@@ -59,8 +59,8 @@ switch ($_GET['v']) {
         break;
     case 'del_xm_id':
         $xm_id = intval($_GET['xmid']);
-        $extuser = DB::fetch_first ( "select * from x_multi where xmid={$xm_id}" );
-        DB::query ( "DELETE FROM `x_multi` WHERE `xmid`={$xm_id}" );
+        $extuser = DB::fetch_first ( "select * from `x_multi` where `xmid`='{$xm_id}'" );
+        DB::query ( "DELETE FROM `x_multi` WHERE `xmid`='{$xm_id}'" );
         DB::query ( "DELETE FROM `member` WHERE `uid`='{$extuser['xuid']}'" );
         DB::query ( "DELETE FROM `member_setting` WHERE `uid`='{$extuser['xuid']}'" );
         DB::query ( "DELETE FROM `my_tieba` WHERE `uid`='{$extuser['xuid']}'" );
@@ -68,7 +68,7 @@ switch ($_GET['v']) {
         $data ['msg'] = "删除成功";
         break;
     case 'load_xm_ids':
-        $query = DB::query ( "SELECT * FROM `x_multi` WHERE `uid` = {$uid}" );
+        $query = DB::query ( "SELECT * FROM `x_multi` WHERE `uid` = '{$uid}'" );
         while ( $result = DB::fetch ( $query ) ) {
             $data['xmids'][] = $result;
         }
@@ -101,7 +101,7 @@ switch ($_GET['v']) {
         }
         if(empty($cookie)) showmessage('非法调用！', stristr($siteurl,'plugins',true) . '#baidu_bind', 1);
         if (!verify_cookie($cookie)) showmessage('无法登陆百度贴吧，请尝试重新绑定',stristr($siteurl,'plugins',true) . '#x_multi-index',5);
-        $newuser = DB::fetch_first("select * from `member` where `uid`={$uid}");
+        $newuser = DB::fetch_first("select * from `member` where `uid`='{$uid}'");
         $xuid = DB::insert('member', array(
             'username' => $newuser['username'],
             'password' => $newuser['password'],
@@ -116,21 +116,7 @@ switch ($_GET['v']) {
             if (is_bool($loc2)) return '';
             return substr($text, $loc1, $loc2 - $loc1);
         }
-    function dump($vars, $label = '', $return = false) {
-        if (ini_get('html_errors')) {
-            $content = "<pre>\n";
-            if ($label != '') {
-                $content .= "<strong>{$label} :</strong>\n";
-            }
-            $content .= htmlspecialchars(print_r($vars, true));
-            $content .= "\n</pre>\n";
-        } else {
-            $content = $label . " :\n" . print_r($vars, true);
-        }
-        if ($return) { return $content; }
-        echo $content;
-        return null;
-    }
+
         $ch = curl_init('https://m.baidu.com/usrprofile');
         curl_setopt($ch,CURLOPT_COOKIE, $cookie);
         curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
