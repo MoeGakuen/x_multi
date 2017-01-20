@@ -44,8 +44,6 @@ class plugin_x_multi extends Plugin{
             case '0.1.0':
             case '0.2.0':
             case '0.2.1':
-                saveSetting ('x_multi','0.2.2-2016-01-19');
-                return '0.2.2';
             case '0.2.2':
                 saveSetting ('x_multi','0.2.3-2016-01-20');
                 return '0.2.3';
