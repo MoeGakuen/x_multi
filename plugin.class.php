@@ -1,6 +1,6 @@
 <?php
 if (!defined('IN_KKFRAME')) exit('Access Denied!');
-class plugin_x_multi extends Plugin{
+class plugin_x_multi {
     var $description = '支持单用户绑定多个ID';
     var $modules = array (
             array (
